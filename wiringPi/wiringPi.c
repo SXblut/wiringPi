@@ -263,7 +263,8 @@ static int sysFds [64] =
 
 // ISR Data
 
-static void (*isrFunctions [64])(void) ;
+static void (*isrFunctions [64])(void*) ;
+static void* isrData [64] ;
 
 
 // Doing it the Arduino way with lookup tables...
@@ -1581,7 +1582,7 @@ static void *interruptHandler (void *arg)
 
   for (;;)
     if (waitForInterrupt (myPin, -1) > 0)
-      isrFunctions [myPin] () ;
+      isrFunctions [myPin] ( isrData [myPin] ) ;
 
   return NULL ;
 }
@@ -1595,7 +1596,7 @@ static void *interruptHandler (void *arg)
  *********************************************************************************
  */
 
-int wiringPiISR (int pin, int mode, void (*function)(void))
+int wiringPiISR (int pin, int mode, void (*function)(void*), void* data )
 {
   pthread_t threadId ;
   const char *modeS ;
@@ -1674,6 +1675,7 @@ int wiringPiISR (int pin, int mode, void (*function)(void))
     read (sysFds [bcmGpioPin], &c, 1) ;
 
   isrFunctions [pin] = function ;
+  isrData [pin] = data;
 
   pthread_mutex_lock (&pinMutex) ;
     pinPass = pin ;

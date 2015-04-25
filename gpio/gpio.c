@@ -471,7 +471,7 @@ void doExport (int argc, char *argv [])
  *********************************************************************************
  */
 
-static void wfi (void)
+static void wfi (void* null)
   { exit (0) ; }
 
 void doWfi (int argc, char *argv [])
@@ -495,7 +495,8 @@ void doWfi (int argc, char *argv [])
     exit (1) ;
   }
 
-  if (wiringPiISR (pin, mode, &wfi) < 0)
+  if (wiringPiISR (pin, mode, &wfi, NULL) < 0)
+  /* NULL as dummy argument. */
   {
     fprintf (stderr, "%s: wfi: Unable to setup ISR: %s\n", argv [1], strerror (errno)) ;
     exit (1) ;

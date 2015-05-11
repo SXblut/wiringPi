@@ -23,16 +23,12 @@
 #    along with wiringPi.  If not, see <http://www.gnu.org/licenses/>.
 #################################################################################
 
-DESTDIR=/usr
-PREFIX=/local
+include ../config.mk
 
-#DEBUG	= -g -O0
-DEBUG	= -O2
-CC	= gcc
-INCLUDE	= -I$(DESTDIR)$(PREFIX)/include
+INCLUDE	= -I$(DESTDIR)$(PREFIX)/include -I../wiringPi/ -I../devLib/
 CFLAGS	= $(DEBUG) -Wall $(INCLUDE) -Winline -pipe
 
-LDFLAGS	= -L$(DESTDIR)$(PREFIX)/lib
+LDFLAGS	= -L$(DESTDIR)$(PREFIX)/lib -L$(DESTDIR)/lib
 LIBS    = -lwiringPi -lwiringPiDev -lpthread -lm
 
 # May not need to  alter anything below this line
@@ -49,6 +45,7 @@ version.h:	../VERSION
 
 gpio:	$(OBJ)
 	@echo [Link]
+	echo "$(CC) -o $@ $(OBJ) $(LDFLAGS) $(LIBS)"
 	@$(CC) -o $@ $(OBJ) $(LDFLAGS) $(LIBS)
 	
 .c.o:
@@ -68,8 +65,8 @@ tags:	$(SRC)
 .PHONY:	install
 install: gpio
 	@echo "[Install]"
+	@mkdir -p		$(DESTDIR)$(PREFIX)/bin
 	@cp gpio		$(DESTDIR)$(PREFIX)/bin
-	@chown root.root	$(DESTDIR)$(PREFIX)/bin/gpio
 	@chmod 4755		$(DESTDIR)$(PREFIX)/bin/gpio
 	@mkdir -p		$(DESTDIR)$(PREFIX)/man/man1
 	@cp gpio.1		$(DESTDIR)$(PREFIX)/man/man1

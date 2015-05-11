@@ -21,21 +21,16 @@
 #    along with wiringPi.  If not, see <http://www.gnu.org/licenses/>.
 #################################################################################
 
-VERSION=$(shell cat ../VERSION)
-DESTDIR=/usr
-PREFIX=/local
+include ../config.mk
 
 STATIC=libwiringPiDev.a
 DYNAMIC=libwiringPiDev.so.$(VERSION)
 
-#DEBUG	= -g -O0
-DEBUG	= -O2
-CC	= gcc
-INCLUDE	= -I.
+INCLUDE	= -I. -I../wiringPi/
 DEFS	= -D_GNU_SOURCE
 CFLAGS	= $(DEBUG) $(DEFS) -Wformat=2 -Wall -Winline $(INCLUDE) -pipe -fPIC
 
-LIBS    =
+LIBS    = -L../wiringPi/
 
 ###############################################################################
 
@@ -86,7 +81,6 @@ install:	$(DYNAMIC)
 	@install -m 0755 -d						$(DESTDIR)$(PREFIX)/lib
 	@install -m 0755 libwiringPiDev.so.$(VERSION)			$(DESTDIR)$(PREFIX)/lib/libwiringPiDev.so.$(VERSION)
 	@ln -sf $(DESTDIR)$(PREFIX)/lib/libwiringPiDev.so.$(VERSION)	$(DESTDIR)/lib/libwiringPiDev.so
-	@ldconfig
 
 .PHONY:	install-static
 install-static:	$(STATIC)
@@ -112,7 +106,6 @@ uninstall:
 	@echo "[UnInstall]"
 	@cd $(DESTDIR)$(PREFIX)/include/ && rm -f $(HEADERS)
 	@cd $(DESTDIR)$(PREFIX)/lib/     && rm -f libwiringPiDev.*
-	@ldconfig
 
 
 .PHONY:	depend

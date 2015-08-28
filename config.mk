@@ -1,6 +1,8 @@
 VERSION=$(shell cat ../VERSION)
-DESTDIR=../LOCAL
-PREFIX=
+# Make sure to use an absolute path for DESTDIR, otherwise the gpio executables 
+# will not compile
+DESTDIR=/usr/
+PREFIX=/local
 
 #DEBUG	= -g -O0
 #OPT	= $(DEBUG)
